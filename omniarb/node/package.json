@@ -1,0 +1,25 @@
+{
+  "name": "omniarb-node",
+  "version": "1.0.0",
+  "description": "OmniArb Node.js execution layer",
+  "main": "tx/submitter.js",
+  "scripts": {
+    "start": "node tx/submitter.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "arbitrage",
+    "polygon",
+    "flashloan",
+    "mev"
+  ],
+  "author": "OmniArb Team",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "ethers": "^6.9.0",
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

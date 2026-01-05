@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Rust scanner service
+  rust-scanner:
+    build:
+      context: ./rust
+      dockerfile: Dockerfile
+    container_name: omniarb-rust-scanner
+    restart: unless-stopped
+    environment:
+      - RUST_LOG=info
+    networks:
+      - omniarb-network
+    volumes:
+      - ./rust:/app
+    command: cargo run --release
+
+  # Python arbitrage engine
+  python-engine:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: omniarb-python-engine
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CHAIN_ID=137
+    networks:
+      - omniarb-network
+    volumes:
+      - ./python:/app
+    env_file:
+      - .env
+    command: python -m engine.ultimate_arbitrage_engine
+
+  # Node.js transaction submitter
+  node-submitter:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    container_name: omniarb-node-submitter
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - omniarb-network
+    volumes:
+      - ./node:/app
+    env_file:
+      - .env
+    command: node tx/submitter.js
+
+networks:
+  omniarb-network:
+    driver: bridge

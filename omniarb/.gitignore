@@ -1,0 +1,78 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+ENV/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# Solidity
+cache/
+out/
+artifacts/
+typechain/
+typechain-types/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Model files (if large)
+*.onnx
+models/
+
+# Secrets
+*.pem
+*.key
+*.cert
