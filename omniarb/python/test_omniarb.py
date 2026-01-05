@@ -144,8 +144,23 @@ def test_arbitrage_engine():
     assert len(engine.pools) > 0
     assert engine.math is not None
     
-    # Test route evaluation
-    route = {
+    # Test profitable route with realistic price difference
+    profitable_route = {
+        'loan_amount': 100000,
+        'provider': 'balancer',
+        'steps': [
+            {'slippage': 0.0003, 'price_impact': 0.0002},
+            {'slippage': 0.0003, 'price_impact': -0.0197},  # 2% price advantage
+        ]
+    }
+    
+    result = engine.evaluate_route(profitable_route, gas_price=25, native_price=0.8)
+    assert result is not None, "Engine should find profitable routes with price advantages"
+    assert result['profit'] > 0, "Profitable route should have positive profit"
+    assert result['will_revert'] == False, "Profitable route should not revert"
+    
+    # Test unprofitable route
+    unprofitable_route = {
         'loan_amount': 1000,
         'provider': 'aave',
         'steps': [
@@ -153,8 +168,8 @@ def test_arbitrage_engine():
         ]
     }
     
-    result = engine.evaluate_route(route, gas_price=50, native_price=1.0)
-    # This will likely be None due to low profit, which is correct
+    result2 = engine.evaluate_route(unprofitable_route, gas_price=50, native_price=1.0)
+    assert result2 is None, "Engine should reject unprofitable routes"
     
     print("✓ Arbitrage engine test passed")
 

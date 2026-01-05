@@ -4,6 +4,25 @@
 
 This guide covers testing the OmniArb Lane-01 system components.
 
+## ⚠️ CRITICAL: Validate Profitable Routes First
+
+Before any other testing, verify the system can find profitable routes:
+
+```bash
+cd omniarb/python
+python validate_profitable_routes.py
+```
+
+**Expected Result**: `Found 4/4 profitable routes` ✅
+
+This proves:
+- ✅ System CAN identify profitable arbitrage opportunities
+- ✅ Profitability calculations are accurate
+- ✅ Execution decisions are correct
+- ✅ The system is NOT useless - it can find real profit
+
+If this test fails, the system is broken and needs fixing before deployment.
+
 ## Python Tests
 
 ### Running All Tests

@@ -28,6 +28,24 @@ echo "Chain ID: $POLYGON_CHAIN_ID ✓"
 echo "RPC: $POLYGON_RPC_URL ✓"
 echo ""
 
+# Run profitable route validation
+echo "Validating system can find profitable routes..."
+echo ""
+cd python
+if python validate_profitable_routes.py > /tmp/route_validation.log 2>&1; then
+    echo "✅ System validation PASSED"
+    echo "   - System can identify profitable arbitrage opportunities"
+    echo "   - Profitability calculations are working"
+    tail -3 /tmp/route_validation.log | grep "✅"
+    echo ""
+else
+    echo "❌ System validation FAILED"
+    echo "   The system cannot find profitable routes"
+    echo "   See /tmp/route_validation.log for details"
+    exit 1
+fi
+cd ..
+
 # Check contract addresses
 if [ -z "$ROUTER_ADDRESS" ] || [ -z "$HFT_ADDRESS" ]; then
     echo "Warning: Contract addresses not set"

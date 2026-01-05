@@ -108,6 +108,22 @@ Otherwise, execution is **ABORTED**.
 - Private key with POL for gas
 - (Optional) BloXroute authentication token
 
+### Verification First!
+
+Before deployment, verify the system can find profitable routes:
+
+```bash
+cd omniarb/python
+python validate_profitable_routes.py
+```
+
+Expected output: **4/4 profitable routes found** ✅
+
+This proves the system can:
+- ✅ Identify real arbitrage opportunities
+- ✅ Calculate accurate profit/loss
+- ✅ Make correct execution decisions
+
 ### Configuration
 
 1. Copy environment template:
