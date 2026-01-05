@@ -294,26 +294,36 @@ class PerformanceMetrics:
         """Calculate win/loss analysis metrics"""
         total_trades = len(trades)
         
-        winning_trades = [t for t in trades if t['is_winner']]
-        losing_trades = [t for t in trades if not t['is_winner']]
+        # Single pass through trades to collect all statistics
+        num_wins = 0
+        num_losses = 0
+        total_wins = 0.0
+        total_losses = 0.0
+        largest_win = 0.0
+        largest_loss = 0.0
         
-        num_wins = len(winning_trades)
-        num_losses = len(losing_trades)
+        for t in trades:
+            if t['is_winner']:
+                num_wins += 1
+                profit = t['net_profit']
+                total_wins += profit
+                if profit > largest_win:
+                    largest_win = profit
+            else:
+                num_losses += 1
+                loss = t['net_profit']
+                total_losses += abs(loss)
+                if loss < largest_loss:
+                    largest_loss = loss
         
         win_rate = (num_wins / total_trades * 100) if total_trades > 0 else 0.0
         
-        # Calculate profit factor
-        total_wins = sum(t['net_profit'] for t in winning_trades)
-        total_losses = abs(sum(t['net_profit'] for t in losing_trades))
-        profit_factor = (total_wins / total_losses) if total_losses > 0 else float('inf')
+        # Calculate profit factor - use large number instead of infinity for JSON serialization
+        profit_factor = (total_wins / total_losses) if total_losses > 0 else 999.99  # Large number instead of inf
         
         # Average win/loss
         avg_win = (total_wins / num_wins) if num_wins > 0 else 0.0
         avg_loss = (-total_losses / num_losses) if num_losses > 0 else 0.0
-        
-        # Largest win/loss
-        largest_win = max((t['net_profit'] for t in winning_trades), default=0.0)
-        largest_loss = min((t['net_profit'] for t in losing_trades), default=0.0)
         
         return {
             'total_trades': total_trades,
@@ -382,7 +392,11 @@ class PerformanceMetrics:
         report.append(f"Winning Trades:            {metrics['winning_trades']:>15,d}")
         report.append(f"Losing Trades:             {metrics['losing_trades']:>15,d}")
         report.append(f"Win Rate:                  {metrics['win_rate_percent']:>15.2f}%")
-        report.append(f"Profit Factor:             {metrics['profit_factor']:>15.2f}")
+        
+        # Handle infinite profit factor for display
+        pf_display = f"{metrics['profit_factor']:>15.2f}" if metrics['profit_factor'] != float('inf') else "    No Losses (∞)"
+        report.append(f"Profit Factor:             {pf_display}")
+        
         report.append(f"Average Win:               ${metrics['average_win_usd']:>15,.2f}")
         report.append(f"Average Loss:              ${metrics['average_loss_usd']:>15,.2f}")
         report.append(f"Largest Win:               ${metrics['largest_win_usd']:>15,.2f}")

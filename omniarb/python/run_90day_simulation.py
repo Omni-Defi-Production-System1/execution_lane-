@@ -18,6 +18,14 @@ from simulation.arbitrage_simulator import ArbitrageSimulator
 from simulation.performance_metrics import PerformanceMetrics
 from token_universe.token_universe_intel import TokenUniverse
 
+# Simulation constants
+# These simulate realistic DEX price differences
+# DEX1 (QuickSwap) typically has slightly lower prices (good for buying)
+# DEX2 (SushiSwap) typically has slightly higher prices (good for selling)
+DEX1_PREMIUM = -0.005  # QuickSwap: 0.5% cheaper (favorable for buying)
+DEX2_PREMIUM = 0.008   # SushiSwap: 0.8% more expensive (favorable for selling)
+# Net spread: 1.3% arbitrage opportunity
+
 
 def setup_logging(verbose: bool = True):
     """Configure logging"""
@@ -116,9 +124,8 @@ def run_90day_simulation(
     
     price_discrepancies = data_fetcher.calculate_price_discrepancy(
         token_data=pair_data['token0'],
-        dex1_premium=-0.005,  # QuickSwap: 0.5% cheaper (good for buying)
-        dex2_premium=0.008    # SushiSwap: 0.8% more expensive (good for selling)
-        # Net difference: 1.3% arbitrage opportunity
+        dex1_premium=DEX1_PREMIUM,
+        dex2_premium=DEX2_PREMIUM
     )
     
     opportunities = sum(1 for d in price_discrepancies if d['arbitrage_opportunity'])

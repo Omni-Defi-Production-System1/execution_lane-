@@ -5,6 +5,7 @@ Fetches historical OHLCV data from exchanges and RPC endpoints
 
 import requests
 import time
+import random
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import logging
@@ -194,8 +195,6 @@ class HistoricalDataFetcher:
         Returns:
             List of OHLCV dictionaries
         """
-        import random
-        
         data = []
         current_price = base_price
         end_date = datetime.now()
