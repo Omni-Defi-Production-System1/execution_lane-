@@ -6,11 +6,9 @@ eth-abi==4.2.1
 
 # Numerical and mathematical libraries
 numpy==1.26.2
-decimal
 
 # Async and networking
 aiohttp==3.9.1
-asyncio
 requests==2.31.0
 
 # Redis for inter-process communication

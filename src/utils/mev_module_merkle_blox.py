@@ -111,7 +111,8 @@ if __name__ == "__main__":
     print("Proof Verified:", verified)
 
     # Step 3: Create MyBlox header
-    header = MyBloxHeader(route_id="0xabc123", route_path=candidate_routes[0], bot_id="dual-apex-01", secret_key="super_secret")
+    # NOTE: Replace 'YOUR_SECRET_KEY' with actual secret from environment variables in production
+    header = MyBloxHeader(route_id="0xabc123", route_path=candidate_routes[0], bot_id="dual-apex-01", secret_key="YOUR_SECRET_KEY")
     key = header.generate_blox_key()
     print("Blox Key:", key)
 

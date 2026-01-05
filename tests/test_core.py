@@ -206,7 +206,3 @@ class TestDEXType:
         """Test DEX type enum values"""
         assert DEXType.UNISWAP_V3.value == "uniswap_v3"
         assert DEXType.CURVE.value == "curve"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

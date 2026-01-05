@@ -8,9 +8,10 @@ class TokenUniverse:
 
     @staticmethod
     def polygon_core() -> "TokenUniverse":
+        # Note: POL is the rebranded MATIC token, WMATIC is wrapped MATIC/POL
         return TokenUniverse(groups={
             "stables": ["USDC", "USDT", "DAI", "FRAX"],
-            "majors":  ["POL", "WMATIC", "WETH", "WBTC"],
+            "majors":  ["POL", "WMATIC", "WETH", "WBTC"],  # POL = native, WMATIC = wrapped
             "defi":    ["AAVE", "CRV", "BAL", "SUSHI", "LINK", "UNI", "YFI", "SNX", "LDO"],
             "alts":    ["AVAX", "FTM"]
         })
