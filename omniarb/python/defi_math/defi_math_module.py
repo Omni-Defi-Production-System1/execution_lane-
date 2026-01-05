@@ -61,8 +61,16 @@ class DeFiMathematicsEngine:
             slippage = step.get('slippage', 0.003)  # Default 0.3%
             price_impact = step.get('price_impact', 0.001)  # Default 0.1%
             
-            current_amount = current_amount * (1 - slippage) * (1 - price_impact)
-            total_price_impact += price_impact
+            # Price impact can be negative (favorable) or positive (unfavorable)
+            # Negative price impact means we get a better price than expected
+            if price_impact < 0:
+                # Favorable price movement - we get MORE tokens than expected
+                current_amount = current_amount * (1 - slippage) * (1 + abs(price_impact))
+            else:
+                # Unfavorable price movement - we get FEWER tokens than expected
+                current_amount = current_amount * (1 - slippage) * (1 - price_impact)
+            
+            total_price_impact += abs(price_impact)
         
         # Calculate gas costs
         gas_per_step = 150000  # Estimated gas per swap

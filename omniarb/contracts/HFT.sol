@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./IRouter.sol";
+
 /**
  * @title HFT (High-Frequency Trading)
  * @notice Flashloan receiver contract for atomic arbitrage execution
@@ -34,24 +36,6 @@ interface IERC20 {
     function transferFrom(address from, address to, uint256 amount) external returns (bool);
     function approve(address spender, uint256 amount) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
-}
-
-interface IRouter {
-    function executeArbitrage(
-        Router.SwapStep[] calldata steps,
-        uint256 minProfit
-    ) external returns (uint256);
-}
-
-contract Router {
-    struct SwapStep {
-        address dex;
-        address tokenIn;
-        address tokenOut;
-        address pool;
-        uint256 amountIn;
-        uint256 minAmountOut;
-    }
 }
 
 contract HFT is IFlashLoanReceiver {
@@ -144,9 +128,9 @@ contract HFT is IFlashLoanReceiver {
         uint256 amountOwed = amount + premium;
         
         // Decode arbitrage parameters
-        (Router.SwapStep[] memory steps, uint256 minProfit) = abi.decode(
+        (IRouter.SwapStep[] memory steps, uint256 minProfit) = abi.decode(
             params,
-            (Router.SwapStep[], uint256)
+            (IRouter.SwapStep[], uint256)
         );
         
         // Transfer borrowed amount to router

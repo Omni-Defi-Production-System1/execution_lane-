@@ -36,7 +36,8 @@ def find_profitable_route():
                 # Buy WMATIC on QuickSwap (cheaper)
                 {'slippage': 0.0003, 'price_impact': 0.0002},
                 # Sell WMATIC on SushiSwap (more expensive) - 2% price advantage
-                {'slippage': 0.0003, 'price_impact': -0.0198},  # Negative = price in our favor
+                # Negative price_impact = favorable price movement (we get MORE than expected)
+                {'slippage': 0.0003, 'price_impact': -0.0198},  # -1.98% means 1.98% better price
             ],
             'gas_price': 25,
             'native_price': 0.8
