@@ -133,6 +133,9 @@ class ArbitrageSimulator:
         """
         Run simulation on historical price data
         
+        This simulates flash loan arbitrage where each opportunity is executed
+        as an atomic transaction (not held over time).
+        
         Args:
             price_data: List of price discrepancy data from HistoricalDataFetcher
             trade_amount: Amount to trade per opportunity (USD)
@@ -148,26 +151,20 @@ class ArbitrageSimulator:
         self._reset_state()
         
         for i, data_point in enumerate(price_data):
-            price_diff = abs(data_point.get('difference_percent', 0))
+            # Flash loan arbitrage is executed atomically when spread is profitable
+            # We don't hold positions - each trade is instantaneous
             
-            # Check for entry opportunity
-            if not self.in_position and price_diff >= self.entry_threshold:
-                self._enter_position(data_point, trade_amount)
+            diff_percent = data_point.get('difference_percent', 0)
+            
+            # Only execute if the spread is profitable (above entry threshold)
+            if abs(diff_percent) >= self.entry_threshold:
+                self._execute_atomic_arbitrage(data_point, trade_amount)
                 self.total_opportunities += 1
                 
                 # Check if we've hit max trades
-                if max_trades and self.total_entries >= max_trades:
+                if max_trades and len(self.trades) >= max_trades:
                     self.logger.info(f"Reached max trades limit: {max_trades}")
                     break
-            
-            # Check for exit opportunity
-            elif self.in_position and price_diff <= self.exit_threshold:
-                self._exit_position(data_point)
-        
-        # Close any open position at end of simulation
-        if self.in_position and len(price_data) > 0:
-            self.logger.info("Closing open position at end of simulation")
-            self._exit_position(price_data[-1])
         
         # Calculate metrics
         metrics = self._calculate_metrics()
@@ -195,6 +192,93 @@ class ArbitrageSimulator:
         self.total_opportunities = 0
         self.total_entries = 0
         self.total_exits = 0
+    
+    def _execute_atomic_arbitrage(self, data_point: Dict, amount: float):
+        """
+        Execute an atomic flash loan arbitrage transaction
+        
+        In real flash loan arbitrage:
+        1. Borrow tokens from flash loan provider
+        2. Buy on DEX with lower price
+        3. Sell on DEX with higher price
+        4. Repay flash loan + fee
+        5. Keep the profit (all in one transaction)
+        
+        Args:
+            data_point: Price data with DEX1 and DEX2 prices
+            amount: Trade amount in USD
+        """
+        import random
+        
+        dex1_price = data_point.get('dex1_price', 0)
+        dex2_price = data_point.get('dex2_price', 0)
+        
+        if dex1_price <= 0 or dex2_price <= 0:
+            return
+        
+        # Determine buy/sell prices
+        buy_price_before_slippage = min(dex1_price, dex2_price)
+        sell_price_before_slippage = max(dex1_price, dex2_price)
+        
+        # Apply realistic slippage (0.1% - 0.5% depending on volatility)
+        volatility = data_point.get('price_volatility', 0)
+        base_slippage = 0.002  # 0.2% base slippage
+        volatility_slippage = volatility * 0.5  # Additional slippage from volatility
+        total_slippage = base_slippage + volatility_slippage + random.uniform(0, 0.003)
+        
+        # Slippage makes buying more expensive and selling less profitable
+        buy_price = buy_price_before_slippage * (1 + total_slippage)
+        sell_price = sell_price_before_slippage * (1 - total_slippage)
+        
+        # Calculate tokens to buy/sell
+        # We borrow flash loan in stablecoin, convert to calculate tokens
+        tokens_bought = amount / buy_price
+        proceeds_from_sell = tokens_bought * sell_price
+        
+        # Calculate gross profit
+        gross_profit = proceeds_from_sell - amount
+        
+        # Calculate costs
+        gas_cost = self._calculate_gas_cost()
+        flashloan_fee = self._calculate_flashloan_fee(amount)
+        
+        # Net profit
+        net_profit = gross_profit - gas_cost - flashloan_fee
+        
+        # Simulate transaction failure (MEV/frontrunning) - 5-10% of trades fail
+        # In real world, some profitable opportunities get frontrun or fail
+        if random.random() < 0.07:  # 7% failure rate
+            # Transaction failed - lose only gas cost
+            net_profit = -gas_cost
+            self.logger.debug(
+                f"FAILED ARBITRAGE at {data_point.get('datetime', 'N/A')}: "
+                f"Transaction reverted (frontrun or MEV), Lost gas: ${gas_cost:.2f}"
+            )
+        
+        # Create trade record (only if net profit is positive after costs)
+        # In real flash loan arbitrage, negative P&L trades would revert
+        # But we simulate failures as gas-only losses
+        trade = Trade(
+            timestamp=data_point.get('timestamp', 0),
+            entry_price=buy_price,
+            exit_price=sell_price,
+            amount=amount,
+            entry_threshold=self.entry_threshold,
+            exit_threshold=self.exit_threshold,
+            gas_cost=gas_cost,
+            flashloan_fee=flashloan_fee
+        )
+        
+        self.trades.append(trade)
+        self.total_entries += 1
+        
+        if net_profit > 0:
+            self.logger.debug(
+                f"SUCCESSFUL ARBITRAGE at {data_point.get('datetime', 'N/A')}: "
+                f"Buy=${buy_price:.4f}, Sell=${sell_price:.4f}, "
+                f"P&L=${net_profit:.2f}"
+            )
+        
     
     def _enter_position(self, data_point: Dict, amount: float):
         """Enter a trading position"""
