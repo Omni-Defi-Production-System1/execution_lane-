@@ -452,7 +452,9 @@ Experience OmniArb in your browser with zero setup:
 - ✅ Visual performance analytics
 - ✅ Safe sandbox environment
 
-[📚 Colab Setup Guide](COLAB_SETUP.md)
+[📚 Colab Setup Guide](COLAB_SETUP.md) | [Quick Reference](COLAB_QUICKREF.md)
+
+> **Note:** The notebook is maintained on the `main` branch for stability. See setup guide for alternative access methods.
 
 ---
 

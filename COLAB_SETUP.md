@@ -10,6 +10,8 @@ Click the badge below to open the notebook directly in Google Colab:
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Omni-Defi-Production-System1/execution_lane-/blob/main/OmniArb_Colab_Demo.ipynb)
 
+> **Note:** The Colab link points to the `main` branch where the stable version of the notebook is maintained. If you're working on a different branch, you can modify the URL accordingly or use Option 2 or 3 below.
+
 ### Option 2: Manual Upload
 
 1. Download the notebook: `OmniArb_Colab_Demo.ipynb`
