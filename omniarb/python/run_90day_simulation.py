@@ -114,18 +114,30 @@ def run_90day_simulation(
         days=90
     )
     
-    logger.info(f"Fetched {len(pair_data['token0'])} data points")
+    logger.info(f"Fetched {len(pair_data['token0'])} daily data points")
     
-    # Calculate price discrepancies
-    # Simulate that QuickSwap has slightly lower prices (good for buying)
-    # and SushiSwap has slightly higher prices (good for selling)
-    # This creates realistic arbitrage opportunities
-    logger.info("Calculating price discrepancies between DEXs...")
+    # Generate intraday price samples for more realistic trading opportunities
+    logger.info("Generating intraday price samples...")
+    print("Generating hourly price data for realistic arbitrage opportunities...")
+    
+    intraday_data = data_fetcher.generate_intraday_opportunities(
+        daily_data=pair_data['token0'],
+        samples_per_day=24  # Hourly samples
+    )
+    
+    logger.info(f"Generated {len(intraday_data)} intraday data points")
+    
+    # Calculate price discrepancies with realistic DEX spread patterns
+    # QuickSwap typically has slightly lower prices (good for buying)
+    # SushiSwap typically has slightly higher prices (good for selling)
+    # Dynamic spread adds time-varying arbitrage opportunities
+    logger.info("Calculating realistic price discrepancies between DEXs...")
     
     price_discrepancies = data_fetcher.calculate_price_discrepancy(
-        token_data=pair_data['token0'],
+        token_data=intraday_data,
         dex1_premium=DEX1_PREMIUM,
-        dex2_premium=DEX2_PREMIUM
+        dex2_premium=DEX2_PREMIUM,
+        add_dynamic_spread=True  # Add realistic time-varying spread
     )
     
     opportunities = sum(1 for d in price_discrepancies if d['arbitrage_opportunity'])
