@@ -29,7 +29,8 @@ class Trade:
         entry_threshold: float,
         exit_threshold: float,
         gas_cost: float = 0.0,
-        flashloan_fee: float = 0.0
+        flashloan_fee: float = 0.0,
+        gross_profit: float = None  # Allow passing pre-calculated gross profit
     ):
         self.timestamp = timestamp
         self.entry_price = entry_price
@@ -40,8 +41,16 @@ class Trade:
         self.gas_cost = gas_cost
         self.flashloan_fee = flashloan_fee
         
-        # Calculate P&L
-        self.gross_profit = (exit_price - entry_price) * amount
+        # Calculate P&L for flash loan arbitrage
+        # If gross_profit provided, use it; otherwise calculate
+        if gross_profit is not None:
+            self.gross_profit = gross_profit
+        else:
+            # Flash loan arbitrage: borrow USD, buy tokens, sell tokens
+            tokens_bought = amount / entry_price
+            proceeds = tokens_bought * exit_price
+            self.gross_profit = proceeds - amount
+        
         self.net_profit = self.gross_profit - gas_cost - flashloan_fee
         self.roi = (self.net_profit / amount) * 100 if amount > 0 else 0
         self.is_winner = self.net_profit > 0
@@ -81,7 +90,8 @@ class ArbitrageSimulator:
         exit_threshold_percent: float = 0.5,
         flash_loan_provider: str = 'balancer',
         gas_price_gwei: float = 30.0,
-        native_token_price_usd: float = 0.8
+        native_token_price_usd: float = 0.8,
+        failure_rate: float = 0.07  # 7% MEV/frontrunning failure rate
     ):
         """
         Initialize the arbitrage simulator
@@ -92,6 +102,7 @@ class ArbitrageSimulator:
             flash_loan_provider: 'aave' or 'balancer'
             gas_price_gwei: Average gas price in gwei
             native_token_price_usd: Native token (POL) price in USD
+            failure_rate: Probability of transaction failure (MEV/frontrunning)
         """
         self.logger = logging.getLogger("ArbitrageSimulator")
         
@@ -100,6 +111,7 @@ class ArbitrageSimulator:
         self.flash_loan_provider = flash_loan_provider
         self.gas_price_gwei = gas_price_gwei
         self.native_token_price_usd = native_token_price_usd
+        self.failure_rate = failure_rate
         
         # Initialize math engine
         self.math_engine = DeFiMathematicsEngine()
@@ -245,9 +257,9 @@ class ArbitrageSimulator:
         # Net profit
         net_profit = gross_profit - gas_cost - flashloan_fee
         
-        # Simulate transaction failure (MEV/frontrunning) - 5-10% of trades fail
+        # Simulate transaction failure (MEV/frontrunning)
         # In real world, some profitable opportunities get frontrun or fail
-        if random.random() < 0.07:  # 7% failure rate
+        if random.random() < self.failure_rate:
             # Transaction failed - lose only gas cost
             net_profit = -gas_cost
             self.logger.debug(
@@ -255,9 +267,7 @@ class ArbitrageSimulator:
                 f"Transaction reverted (frontrun or MEV), Lost gas: ${gas_cost:.2f}"
             )
         
-        # Create trade record (only if net profit is positive after costs)
-        # In real flash loan arbitrage, negative P&L trades would revert
-        # But we simulate failures as gas-only losses
+        # Create trade record
         trade = Trade(
             timestamp=data_point.get('timestamp', 0),
             entry_price=buy_price,
@@ -266,7 +276,8 @@ class ArbitrageSimulator:
             entry_threshold=self.entry_threshold,
             exit_threshold=self.exit_threshold,
             gas_cost=gas_cost,
-            flashloan_fee=flashloan_fee
+            flashloan_fee=flashloan_fee,
+            gross_profit=gross_profit  # Pass pre-calculated gross profit
         )
         
         self.trades.append(trade)
