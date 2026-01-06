@@ -19,6 +19,8 @@ A production-ready, high-performance flashloan arbitrage platform for Polygon bl
 - [Core Modules](#core-modules)
 - [90-Day Simulation System](#90-day-simulation-system)
 - [Quick Start](#quick-start)
+  - [Google Colab Demo](#-try-in-google-colab-no-installation-required)
+  - [Local Installation](#prerequisites-for-local-installation)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
@@ -439,7 +441,22 @@ This ensures that simulation results accurately predict live system performance.
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 🌐 Try in Google Colab (No Installation Required!)
+
+Experience OmniArb in your browser with zero setup:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Omni-Defi-Production-System1/execution_lane-/blob/main/OmniArb_Colab_Demo.ipynb)
+
+- ✅ No local installation required
+- ✅ Interactive demos and simulations
+- ✅ Visual performance analytics
+- ✅ Safe sandbox environment
+
+[📚 Colab Setup Guide](COLAB_SETUP.md)
+
+---
+
+### Prerequisites (For Local Installation)
 
 - **Docker & Docker Compose** (recommended) OR
 - **Rust 1.70+** (for scanner)
@@ -929,6 +946,8 @@ export DEBUG=*
 
 ### Core Documentation
 
+- **[COLAB_SETUP.md](COLAB_SETUP.md)** - 🌐 Google Colab setup and usage guide
+- **[OmniArb_Colab_Demo.ipynb](OmniArb_Colab_Demo.ipynb)** - 📓 Interactive Jupyter notebook
 - [omniarb/README.md](omniarb/README.md) - Complete system documentation
 - [omniarb/SYSTEM_OVERVIEW.md](omniarb/SYSTEM_OVERVIEW.md) - Architecture deep-dive
 - [omniarb/TESTING.md](omniarb/TESTING.md) - Testing guide
