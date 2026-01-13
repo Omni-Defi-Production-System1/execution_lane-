@@ -297,6 +297,26 @@ OmniArb Execution Lane is a sophisticated, multi-language arbitrage system desig
 - Smart prioritization and batch optimization
 - Async/await support for high-throughput scenarios
 
+**Routing Layer (`routing/`)** ⭐ v2.0
+- `advanced_router.py` - Multi-hop path discovery and optimization
+- `route_optimizer.py` - Trade amount and pool selection optimization
+- `multi_path_router.py` - Parallel multi-token route evaluation
+- Dynamic route scoring and ranking
+- Route caching for performance
+
+**Dashboard Layer (`dashboard/`)** ⭐ v2.0
+- `dashboard_server.py` - Real-time HTML dashboard
+- `websocket_server.py` - WebSocket server for live updates
+- `metrics_collector.py` - Performance metrics tracking
+- Live opportunity and transaction feeds
+- Auto-refreshing analytics
+
+**Data API Layer (`data_api/`)** ⭐ v2.0
+- `historical_api.py` - Historical price and liquidity data
+- `realtime_feed.py` - WebSocket-based real-time price feeds
+- Multi-source data aggregation
+- Smart caching and rate limiting
+
 **Execution Layer (`execution/`)**
 - `ultra_call_builder.py` - Transaction calldata encoding
 - `preflight.py` - Pre-execution validation checks
@@ -488,10 +508,14 @@ Experience OmniArb in your browser with zero setup:
 - ✅ Interactive demos and simulations
 - ✅ Visual performance analytics
 - ✅ Safe sandbox environment
+- ✅ Perfect for learning and backtesting
+- ✅ **NEW v2.0**: Real transaction execution support
 
-[📚 Colab Setup Guide](COLAB_SETUP.md) | [Quick Reference](COLAB_QUICKREF.md)
+[📚 Colab Setup Guide](COLAB_SETUP.md) | [Quick Reference](COLAB_QUICKREF.md) | [**Real Transactions Guide**](docs/COLAB_REAL_TRANSACTIONS.md)
 
 > **Note:** The notebook is maintained on the `main` branch for stability. See setup guide for alternative access methods.
+
+> **NEW v2.0**: You can now execute real arbitrage transactions directly from Google Colab! See the [Real Transactions Guide](docs/COLAB_REAL_TRANSACTIONS.md) for setup and safety guidelines.
 
 ---
 
@@ -985,6 +1009,8 @@ export DEBUG=*
 
 ### Core Documentation
 
+- **[NEW_FEATURES_V2.md](docs/NEW_FEATURES_V2.md)** - 🆕 Complete v2.0 features guide
+- **[COLAB_REAL_TRANSACTIONS.md](docs/COLAB_REAL_TRANSACTIONS.md)** - 🆕 Real transaction execution guide
 - **[COLAB_SETUP.md](COLAB_SETUP.md)** - 🌐 Google Colab setup and usage guide
 - **[OmniArb_Colab_Demo.ipynb](OmniArb_Colab_Demo.ipynb)** - 📓 Interactive Jupyter notebook
 - [omniarb/README.md](omniarb/README.md) - Complete system documentation
@@ -1042,18 +1068,22 @@ For licensing inquiries, please contact the repository owner.
 - ✅ 90-day simulation system
 - ✅ Performance metrics and analytics
 
+**Recently Added (v2.0):**
+- ✅ Advanced routing algorithms (multi-path discovery, route optimization)
+- ✅ Real-time dashboard and monitoring (WebSocket-based)
+- ✅ Enhanced ML models (9-feature model with importance analysis)
+- ✅ Historical data API integration (multi-source with caching)
+- ✅ WebSocket-based real-time updates
+- ✅ Mainnet deployment ready (safety checks, rate limiting)
+- ✅ Google Colab real transaction support
+
 **In Progress:**
 - 🔄 Multi-chain expansion (Arbitrum, Optimism, Base)
-- 🔄 Advanced routing algorithms
-- 🔄 Real-time dashboard and monitoring
-- 🔄 Enhanced ML models
+- 🔄 Automated parameter optimization
 
 **Planned:**
 - ⏳ Smart contract audit
-- ⏳ Mainnet deployment
-- ⏳ Historical data API integration
-- ⏳ Automated parameter optimization
-- ⏳ WebSocket-based real-time updates
+- ⏳ Full production mainnet deployment with capital
 
 ---
 
